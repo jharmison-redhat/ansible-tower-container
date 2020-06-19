@@ -1,0 +1,22 @@
+---
+- name: Undefine the Postgresql container for Ansible Tower
+  podman_container:
+    name: tower_postgresql
+    state: absent
+
+- name: Remove postgresql10 image
+  podman_image:
+    name: '{{ postgresql_image }}'
+    state: absent
+
+- name: Check for persistent folder
+  stat:
+    path: '{{ postgresql_persistent_dir }}'
+  register: persistent_dir
+  when: postgresql_persistent|bool
+
+- name: Remove folder
+  shell: podman unshare rm -rf '{{ postgresql_persistent_dir }}'
+  when:
+    - postgresql_persistent|bool
+    - persistent_dir.stat.exists

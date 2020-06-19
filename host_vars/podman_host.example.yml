@@ -1,0 +1,15 @@
+---
+# The registry.redhat.io service account pull secret
+# This is needed to access the authenticated Red Hat registry. To get a service
+#   account, to go:
+#     https://access.redhat.com/terms-based-registry/
+#   Login with your Red Hat credentials, then go to Service Accounts (upper
+#   right corner) and create a new service account. Click on the name of the
+#   service account, go to the 'Docker Login' tab, and then copy the contents
+#   of the username and password fields into these vars.
+registry_username: '1234567|service-account'
+registry_password: <very long password>
+
+# You can change this to, for example, `../tower_pgsql` to keep it in the
+#   project directory
+postgresql_persistent_dir: /tmp/tower_pgsql

@@ -1,0 +1,4 @@
+host_vars/*
+!host_vars/*.example.yml
+tmp/*
+!tmp/.gitkeep

@@ -1,0 +1,38 @@
+---
+- name: Create folder
+  file:
+    path: '{{ postgresql_persistent_dir }}'
+    state: directory
+  when: postgresql_persistent|bool
+
+- name: Check folder owner
+  shell: podman unshare stat -c '%u:%g' "{{ postgresql_persistent_dir }}"
+  changed_when: false
+  register: persistent_dir_owner
+  when: postgresql_persistent|bool
+
+- name: Set owner for folder
+  shell: podman unshare chown 26:26 "{{ postgresql_persistent_dir }}"
+  when:
+    - postgresql_persistent|bool
+    - persistent_dir_owner.stdout != '26:26'
+
+- name: Pull postgresql10 image
+  podman_image:
+    name: '{{ postgresql_image }}'
+    username: '{{ registry_username|default(omit) }}'
+    password: '{{ registry_password|default(omit) }}'
+
+- name: Define a Postgresql container for Ansible Tower
+  podman_container:
+    name: tower_postgresql
+    image: '{{ postgresql_image }}'
+    state: started
+    log_driver: journald
+    ports:
+      - 5432:5432
+    mount: "{{ postgresql_persistent|bool|ternary(postgresql_mount_statement, omit) }}"
+    env:
+      POSTGRESQL_USER: '{{ postgresql_user }}'
+      POSTGRESQL_PASSWORD: '{{ postgresql_password }}'
+      POSTGRESQL_DATABASE: '{{ postgresql_database }}'

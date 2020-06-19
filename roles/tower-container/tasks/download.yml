@@ -1,0 +1,53 @@
+---
+- name: Pull latest ansible-tower-setup checksums
+  get_url:
+    url: https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-CHECKSUM
+    dest: ../tmp/
+
+- name: Grab the signing key
+  get_url:
+    url: https://releases.ansible.com/keys/RPM-GPG-KEY-ansible-release.pub
+    dest: ../tmp/
+
+- name: Import Ansible key, verify signature
+  shell: |
+    trust_key() {
+        echo -e '5\ny\n' | gpg --command-fd 0 --edit-key security@ansible.com trust || exit 2
+        gpg --update-trustdb || exit 3
+        echo changed
+    }
+    cd {{ playbook_dir }}/../tmp
+    gpg --list-keys |& grep -qF security@ansible.com || { gpg --import RPM-GPG-KEY-ansible-release.pub || exit 1; echo changed; }
+    gpg --list-keys |& grep -q 'ultimate.*security@ansible\.com' || trust_key
+    gpg --verify ansible-tower-setup-CHECKSUM |& grep -qF 'Good signature from "Ansible, Inc.' || exit 4
+  register: import_key
+  changed_when: '"changed" in import_key.stdout_lines'
+
+- name: Read the sha256sum of the latest release
+  set_fact:
+    key_value: ""  # https://github.com/VSChina/vscode-ansible/issues/261
+    ansible_tower_sum: >-
+      {{ (lookup('file', '../tmp/ansible-tower-setup-CHECKSUM') |
+        regex_search('\n?(\S*)\s*ansible-tower-setup-latest\.tar\.gz',
+        multiline=true)).split() | first
+      }}
+
+- name: Pull latest ansible-tower-setup
+  get_url:
+    url: https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
+    checksum: sha256:{{ ansible_tower_sum }}
+    dest: ../tmp/
+  register: tower_download
+
+- name: Remove old unarchived setup
+  file:
+    path: ../tmp/ansible-tower-setup-latest
+    state: absent
+  when: tower_download.changed
+
+- name: Untar the archive
+  unarchive:
+    remote_src: yes
+    src: ../tmp/ansible-tower-setup-latest.tar.gz
+    dest: ../tmp/
+    creates: ../tmp/ansible-tower-setup-latest
