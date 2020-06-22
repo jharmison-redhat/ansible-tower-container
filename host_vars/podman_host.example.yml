@@ -13,3 +13,11 @@ registry_password: <very long password>
 # You can change this to, for example, `../tower_pgsql` to keep it in the
 #   project directory
 postgresql_persistent_dir: /tmp/tower_pgsql
+
+# It is recommended that you change these if you plan on using this longer-term
+postgresql_database: tower
+postgresql_user: tower
+postgresql_password: ansible-tower
+
+# You should absolutely 100% definitely change this
+tower_admin_password: password
