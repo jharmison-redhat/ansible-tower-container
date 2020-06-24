@@ -1,7 +1,7 @@
 ---
 - name: Pull latest ansible-tower-setup checksums
   get_url:
-    url: https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-CHECKSUM
+    url: https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-CHECKSUM
     dest: ../tmp/
 
 - name: Grab the signing key
@@ -19,7 +19,7 @@
     cd {{ playbook_dir }}/../tmp
     gpg --list-keys |& grep -qF security@ansible.com || { gpg --import RPM-GPG-KEY-ansible-release.pub || exit 1; echo changed; }
     gpg --list-keys |& grep -q 'ultimate.*security@ansible\.com' || trust_key
-    gpg --verify ansible-tower-setup-bundle-CHECKSUM |& grep -qF 'Good signature from "Ansible, Inc.' || exit 4
+    gpg --verify ansible-tower-setup-CHECKSUM |& grep -qF 'Good signature from "Ansible, Inc.' || exit 4
   register: import_key
   changed_when: '"changed" in import_key.stdout_lines'
 
@@ -27,27 +27,27 @@
   set_fact:
     key_value: ""  # https://github.com/VSChina/vscode-ansible/issues/261
     ansible_tower_sum: >-
-      {{ (lookup('file', '../tmp/ansible-tower-setup-bundle-CHECKSUM') |
-        regex_search('\n?(\S*)\s*ansible-tower-setup-bundle-latest\.tar\.gz',
+      {{ (lookup('file', '../tmp/ansible-tower-setup-CHECKSUM') |
+        regex_search('\n?(\S*)\s*ansible-tower-setup-latest\.tar\.gz',
         multiline=true)).split() | first
       }}
 
-- name: Pull latest ansible-tower-setup-bundle
+- name: Pull latest ansible-tower-setup
   get_url:
-    url: https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.tar.gz
+    url: https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
     checksum: sha256:{{ ansible_tower_sum }}
     dest: ../tmp/
   register: tower_download
 
 - name: Remove old unarchived setup
   file:
-    path: ../tmp/ansible-tower-setup-bundle-latest
+    path: ../tmp/ansible-tower-setup-latest
     state: absent
   when: tower_download.changed
 
 - name: Untar the archive
   unarchive:
     remote_src: yes
-    src: ../tmp/ansible-tower-setup-bundle-latest.tar.gz
+    src: ../tmp/ansible-tower-setup-latest.tar.gz
     dest: ../tmp/
-    creates: ../tmp/ansible-tower-setup-bundle-latest
+    creates: ../tmp/ansible-tower-setup-latest
