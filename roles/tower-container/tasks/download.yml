@@ -32,6 +32,17 @@
         multiline=true)).split() | first
       }}
 
+- name: Read the version of the latest release
+  set_fact:
+    key_value: ""  # https://github.com/VSChina/vscode-ansible/issues/261
+    ansible_tower_version: >-
+      {{ '.'.join('-'.join(
+          ((lookup('file', '../tmp/ansible-tower-setup-CHECKSUM') |
+            regex_search('\n?' + ansible_tower_sum + '\s*\S*\n?', multiline=true)
+          ).split() | last).split('-')[-2:]
+        ).split('.')[:3])
+      }}
+
 - name: Pull latest ansible-tower-setup
   get_url:
     url: https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
@@ -41,7 +52,7 @@
 
 - name: Remove old unarchived setup
   file:
-    path: ../tmp/ansible-tower-setup-latest
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}
     state: absent
   when: tower_download.changed
 
@@ -50,4 +61,4 @@
     remote_src: yes
     src: ../tmp/ansible-tower-setup-latest.tar.gz
     dest: ../tmp/
-    creates: ../tmp/ansible-tower-setup-latest
+    creates: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}

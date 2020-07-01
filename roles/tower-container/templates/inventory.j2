@@ -1,0 +1,15 @@
+[tower]
+localhost ansible_connection=local
+
+[database]
+
+[all:vars]
+admin_password='{{ tower_admin_password }}'
+
+pg_host='{{ ansible_facts["default_ipv4"].address }}'
+pg_port='5432'
+
+pg_database='{{ postgresql_database }}'
+pg_username='{{ postgresql_user }}'
+pg_password='{{ postgresql_password }}'
+pg_sslmode='verify-full'

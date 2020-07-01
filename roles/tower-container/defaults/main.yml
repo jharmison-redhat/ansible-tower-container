@@ -1,0 +1,6 @@
+---
+tower_admin_password: 'password'
+
+postgresql_database: 'tower'
+postgresql_user: 'tower'
+postgresql_password: 'ansible-tower'

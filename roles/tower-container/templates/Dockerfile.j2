@@ -1,0 +1,13 @@
+FROM registry.redhat.io/ubi8/ubi-init
+
+RUN dnf -y install python38 sudo
+RUN python3 -m pip install --upgrade pip setuptools virtualenv ansible
+RUN subscription-manager register --username='{{ rhsm_username }}' --password='{{ rhsm_password }}' && \
+    subscription-manager attach --auto
+
+# Disable requiretty.
+RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers
+
+COPY ansible-tower-setup-{{ ansible_tower_version }} /app
+WORKDIR /app
+RUN /app/setup.sh

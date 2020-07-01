@@ -1,2 +1,22 @@
 ---
 - import_tasks: download.yml
+
+- name: Template the Tower Dockerfile
+  template:
+    src: Dockerfile.j2
+    dest: ../tmp/Dockerfile
+
+- name: Template Tower setup inventory
+  template:
+    src: inventory.j2
+    dest: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/inventory
+
+- name: Build the Tower container
+  podman_image:
+    name: tower
+    path: ../tmp/
+    username: '{{ registry_username|default(omit) }}'
+    password: '{{ registry_password|default(omit) }}'
+    build:
+      format: docker
+      extra_args: --ulimit=nofile=4096:4096

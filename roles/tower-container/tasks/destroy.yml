@@ -16,3 +16,8 @@
     fi
   register: delete_keys
   changed_when: '"changed" in delete_keys.stdout_lines'
+
+- name: Destroy the Tower container image
+  podman_image:
+    name: tower
+    state: absent
