@@ -19,10 +19,13 @@
 
 - name: Wait for Tower to come up from installation
   uri:
-    url: "http://localhost:8080"
+    url: "https://localhost:8443/api/v2/ping/"
     follow_redirects: none
     method: GET
+    user: admin
+    password: '{{ tower_admin_password }}'
+    validate_certs: false
   register: _result
-  until: _result.status == 200
-  retries: 120
+  until: _result.json is defined
+  retries: 60
   delay: 5
