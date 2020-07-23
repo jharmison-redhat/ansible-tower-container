@@ -1,0 +1,27 @@
+---
+- name: Post license key
+  uri:
+    url: https://{{ ansible_host }}:{{ tower_https_port }}/api/v2/config/
+    method: POST
+    user: admin
+    password: '{{ tower_admin_password }}'
+    body: '{{ lookup("file", tower_license)|from_json|combine(eula_status) }}'
+    body_format: json
+    validate_certs: false
+    force_basic_auth: true
+  when: tower_license is defined
+
+- name: Disable job isolation
+  uri:
+    url: https://{{ ansible_host }}:{{ tower_https_port }}/api/v2/settings/jobs/
+    method: PATCH
+    user: admin
+    password: '{{ tower_admin_password }}'
+    body: |
+      {
+        "AWX_PROOT_ENABLED": false
+      }
+    body_format: json
+    validate_certs: false
+    force_basic_auth: true
+  when: disable_job_isolation

@@ -3,3 +3,4 @@ host_vars/*
 tmp/*
 !tmp/.gitkeep
 tags
+tower_license.json
