@@ -11,5 +11,5 @@ To use:
 1. Copy `host_vars/podman_host.example.yml` to `host_vars/podman_host.yml` and update it with the information relevant for you (using the comments there as a guide)
 1. Edit `hosts.yml` (optional) to update which host you want to be doing the podman work on
 1. `ansible-galaxy collection install -r requirements.yml` to install the podman Ansible Collection content
-1. `ansible-playbook playbooks/ansible-tower.yml` to install
+1. `ansible-playbook playbooks/build.yml` to install
 1. `ansible-playbook playbooks/destroy.yml` to uninstall
