@@ -9,8 +9,8 @@
     interactive: true
     tty: true
     ports:
-      - 8080:80
-      - 8443:443
+      - '{{ tower_http_port|default("8080") }}:80'
+      - '{{ tower_https_port|default("8443") }}:443'
     read_only_tmpfs: false
     tmpfs:
       /tmp: rw,nosuid,nodev
@@ -19,7 +19,7 @@
 
 - name: Wait for Tower to come up from installation
   uri:
-    url: "https://localhost:8443/api/v2/ping/"
+    url: "https://{{ ansible_host }}:{{ tower_https_port }}/api/v2/ping/"
     follow_redirects: none
     method: GET
     user: admin
