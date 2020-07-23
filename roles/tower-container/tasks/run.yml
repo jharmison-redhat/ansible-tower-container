@@ -14,6 +14,8 @@
     read_only_tmpfs: false
     tmpfs:
       /tmp: rw,nosuid,nodev
+    security_opt:
+      - label=type:container_userns_t
 
 - name: Wait for Tower to come up from installation
   uri:
