@@ -1,0 +1,10 @@
+[Unit]
+Description=Install Ansible Tower {{ ansible_tower_version }} as part of startup
+
+[Service]
+Type=simple
+ExecStartPre=/app/rhsm-register.sh
+ExecStart=/app/setup.sh && /app/rhsm-unregister.sh
+
+[Install]
+WantedBy=multi-user.target

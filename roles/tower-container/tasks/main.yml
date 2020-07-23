@@ -2,6 +2,9 @@
 - name: Ensure deployment of Tower
   include_tasks: build.yml
   when: deployment_state == "present"
+- name: Ensure Tower installation completes
+  include_tasks: run.yml
+  when: deployment_state == "present"
 - name: Ensure absence of Tower
   include_tasks: destroy.yml
   when: deployment_state == "absent"

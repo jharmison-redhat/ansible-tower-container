@@ -1,0 +1,26 @@
+---
+- name: Start the Tower container
+  podman_container:
+    state: started
+    name: tower
+    image: tower:latest
+    log_driver: journald
+    rm: true
+    interactive: true
+    tty: true
+    ports:
+      - 8080:80
+      - 8443:443
+    read_only_tmpfs: false
+    tmpfs:
+      /tmp: rw,nosuid,nodev
+
+- name: Wait for Tower to come up from installation
+  uri:
+    url: "http://localhost:8080"
+    follow_redirects: none
+    method: GET
+  register: _result
+  until: _result.status == 200
+  retries: 120
+  delay: 5

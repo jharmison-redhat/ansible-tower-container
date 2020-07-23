@@ -1,4 +1,14 @@
 ---
+- name: Destroy the Tower container
+  podman_container:
+    name: tower
+    state: absent
+
+- name: Destroy the Tower container image
+  podman_image:
+    name: tower
+    state: absent
+
 - name: Remove everything in tmp
   file:
     path: '{{ item }}'
@@ -17,7 +27,3 @@
   register: delete_keys
   changed_when: '"changed" in delete_keys.stdout_lines'
 
-- name: Destroy the Tower container image
-  podman_image:
-    name: tower
-    state: absent

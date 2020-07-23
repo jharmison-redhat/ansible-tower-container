@@ -10,6 +10,11 @@
 registry_username: '1234567|service-account'
 registry_password: <very long password>
 
+# Yes, RHSM will need to be used for the building of this image. It will be
+#   deregistered and no subscriptions will be permanently consumed.
+rhsm_username: USERNAME
+rhsm_password: 'PASSWORD'
+
 # You can change this to, for example, `../tower_pgsql` to keep it in the
 #   project directory
 postgresql_persistent_dir: /tmp/tower_pgsql
