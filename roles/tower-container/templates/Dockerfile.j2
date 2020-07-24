@@ -13,7 +13,6 @@ RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers && \
 
 COPY ansible-tower-setup-{{ ansible_tower_version }} /app
 COPY rhsm-register.sh /app/rhsm-register.sh
-COPY rhsm-unregister.sh /app/rhsm-unregister.sh
 
 EXPOSE 80
 EXPOSE 443

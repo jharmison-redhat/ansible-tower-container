@@ -22,8 +22,6 @@
     - name: Dockerfile
     - name: rhsm-register.sh
       mode: '0755'
-    - name: rhsm-unregister.sh
-      mode: '0755'
 
 - name: "[BUILD] Template Tower setup inventory"
   template:
