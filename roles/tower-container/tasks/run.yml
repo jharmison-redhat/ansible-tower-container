@@ -27,5 +27,5 @@
     validate_certs: false
   register: _result
   until: _result.json is defined
-  retries: 60
+  retries: 120
   delay: 5
