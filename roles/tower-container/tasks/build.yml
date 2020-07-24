@@ -3,7 +3,7 @@
 
 - import_tasks: modify.yml
 
-- name: Stage getty override
+- name: "[BUILD] Stage getty override"
   copy:
     content: |
       [Service]
@@ -12,7 +12,7 @@
       ExecStart=-/sbin/agetty --autologin root --noclear --keep-baud console 115200 38400 9600 vt
     dest: ../tmp/getty.conf
 
-- name: Template files needed for build
+- name: "[BUILD] Template files needed for build"
   template:
     src: '{{ item.name }}.j2'
     dest: ../tmp/{{ item.name }}
@@ -25,12 +25,12 @@
     - name: rhsm-unregister.sh
       mode: '0755'
 
-- name: Template Tower setup inventory
+- name: "[BUILD] Template Tower setup inventory"
   template:
     src: inventory.j2
     dest: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/inventory
 
-- name: Build the Tower container
+- name: "[BUILD] Build the Tower container"
   podman_image:
     name: tower
     path: ../tmp/

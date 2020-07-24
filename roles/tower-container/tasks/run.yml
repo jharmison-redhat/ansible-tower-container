@@ -1,5 +1,5 @@
 ---
-- name: Start the Tower container
+- name: "[RUN] Start the Tower container"
   podman_container:
     state: started
     name: tower
@@ -17,7 +17,7 @@
     security_opt:
       - label=type:container_userns_t
 
-- name: Wait for Tower to come up from installation
+- name: "[RUN] Wait for Tower to come up from installation"
   uri:
     url: "https://{{ ansible_host }}:{{ tower_https_port }}/api/v2/ping/"
     follow_redirects: none
