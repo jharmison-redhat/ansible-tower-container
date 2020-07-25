@@ -62,3 +62,4 @@
     src: ../tmp/ansible-tower-setup-latest.tar.gz
     dest: ../tmp/
     creates: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}
+  register: setup_unarchive

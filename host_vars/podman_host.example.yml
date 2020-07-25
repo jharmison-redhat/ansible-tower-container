@@ -41,3 +41,10 @@ tower_https_port: "8443"
 #   may change this key to accept it automatically on the Tower instance
 eula_status:
   eula_accepted: false
+
+# You can change these if you would like to, for example, spin up multiple
+#   copies of tower simultaneously. You can also override them with just
+#   extra-vars if you prefer.
+tower_container_name: ansible-tower
+tower_container_image_name: ansible-tower
+tower_postgresql_container_name: ansible-tower-postgresql

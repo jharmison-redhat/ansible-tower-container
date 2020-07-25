@@ -1,5 +1,7 @@
 ---
-- name: Pull and start prerequisites, build and run Ansible Tower in podman
+- name: >
+    Stop Ansible Tower, the dependent postgresql container, and remove all
+    images
   hosts: podman_host
   vars:
     deployment_state: absent

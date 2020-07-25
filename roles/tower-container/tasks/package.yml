@@ -1,0 +1,107 @@
+- block:
+    - name: "[PACKAGE] Stage getty override"
+      copy:
+        content: |
+          [Service]
+          ExecStart=
+          ExecStartPre=-/usr/bin/sed -i '/pam_loginuid.so/d' /etc/pam.d/login
+          ExecStart=-/sbin/agetty --autologin root --noclear --keep-baud console 115200 38400 9600 vt
+        dest: ../tmp/getty.conf
+
+    - name: "[PACKAGE] Template files needed for build"
+      template:
+        src: '{{ item.name }}.j2'
+        dest: ../tmp/{{ item.name }}
+        mode: '{{ item.mode|default(omit) }}'
+      loop:
+        - name: tower-install.service
+        - name: Dockerfile
+        - name: rhsm-register.sh
+          mode: '0755'
+
+    - name: "[PACKAGE] Template Tower setup inventory"
+      template:
+        src: inventory.j2
+        dest: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/inventory
+
+    - name: "[PACKAGE] Build the Tower container"
+      podman_image:
+        name: '{{ tower_container_image_name }}-init'
+        path: ../tmp/
+        username: '{{ registry_username|default(omit) }}'
+        password: '{{ registry_password|default(omit) }}'
+        state: build
+        build:
+          format: docker
+          extra_args: --ulimit=nofile=4096:4096
+
+    - name: "[PACKAGE] Start the Tower installation"
+      podman_container:
+        state: started
+        name: '{{ tower_container_name }}-init'
+        image: '{{ tower_container_image_name }}-init'
+        log_driver: journald
+        rm: true
+        interactive: true
+        tty: true
+        stop_signal: 3
+        ports:
+          - '{{ tower_http_port|default("8080") }}:80'
+          - '{{ tower_https_port|default("8443") }}:443'
+        read_only_tmpfs: false
+        tmpfs:
+          /tmp: rw,nosuid,nodev
+
+    - name: "[PACKAGE] Wait for Tower setup to finish"
+      uri:
+        url: "https://{{ ansible_host }}:{{ tower_https_port }}/api/v2/ping/"
+        follow_redirects: none
+        method: GET
+        user: admin
+        password: '{{ tower_admin_password }}'
+        validate_certs: false
+      register: _result
+      until: _result.json is defined
+      retries: 120
+      delay: 5
+
+    - name: "[PACKAGE] Post license key"
+      uri:
+        url: https://{{ ansible_host }}:{{ tower_https_port }}/api/v2/config/
+        method: POST
+        user: admin
+        password: '{{ tower_admin_password }}'
+        body: '{{ lookup("file", tower_license)|from_json|combine(eula_status) }}'
+        body_format: json
+        validate_certs: false
+        force_basic_auth: true
+      when: tower_license is defined
+
+    - name: "[PACKAGE] Disable job isolation"
+      uri:
+        url: https://{{ ansible_host }}:{{ tower_https_port }}/api/v2/settings/jobs/
+        method: PATCH
+        user: admin
+        password: '{{ tower_admin_password }}'
+        body: |
+          {
+            "AWX_PROOT_ENABLED": false
+          }
+        body_format: json
+        validate_certs: false
+        force_basic_auth: true
+      when: disable_job_isolation
+
+    - name: "[PACKAGE] Commit changes to Tower image"
+      shell: podman commit '{{ tower_container_name }}-init' '{{ tower_container_image_name }}:{{ ansible_tower_version }}'
+
+  always:
+    - name: "[PACKAGE] Stop Tower setup container"
+      podman_container:
+        state: absent
+        name: '{{ tower_container_name }}-init'
+
+    - name: "[PACKAGE] Remove the Tower setup container image"
+      podman_image:
+        state: absent
+        name: '{{ tower_container_image_name }}-init'

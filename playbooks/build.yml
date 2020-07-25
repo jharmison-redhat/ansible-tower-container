@@ -1,5 +1,5 @@
 ---
-- name: Pull and start prerequisites, build and run Ansible Tower in podman
+- name: Pull and start prerequisites, build Ansible Tower in podman
   hosts: podman_host
   roles:
     - tower-postgresql-container
