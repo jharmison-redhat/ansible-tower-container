@@ -2,9 +2,17 @@
 - name: Ensure deployment of Tower
   include_tasks: build.yml
   when: deployment_state == "present" or deployment_state == "running"
+
 - name: Ensure Tower installation completes
   include_tasks: run.yml
   when: deployment_state == "running"
+
+- name: Stop the Tower container
+  podman_container:
+    name: '{{ tower_container_name }}'
+    state: stopped
+  when: deployment_state == "stopped"
+
 - name: Ensure absence of Tower
   include_tasks: destroy.yml
   when: deployment_state == "absent"
