@@ -28,8 +28,6 @@
       podman_image:
         name: '{{ tower_container_image_name }}-init'
         path: ../tmp/
-        username: '{{ registry_username|default(omit) }}'
-        password: '{{ registry_password|default(omit) }}'
         state: build
         build:
           format: docker
