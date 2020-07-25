@@ -10,5 +10,8 @@ COPY tower-install.service /etc/systemd/system/tower-install.service
 RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers && \
     systemctl enable tower-install.service
 
+ENV RHSM_USERNAME \
+    RHSM_PASSWORD
+
 EXPOSE 80
 EXPOSE 443
