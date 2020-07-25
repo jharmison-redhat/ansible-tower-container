@@ -7,4 +7,3 @@
     deployment_state: absent
   roles:
     - tower-container
-    - tower-postgresql-container

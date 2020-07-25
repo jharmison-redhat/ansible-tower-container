@@ -4,5 +4,4 @@
   vars:
     deployment_state: present
   roles:
-    - tower-postgresql-container
     - tower-container

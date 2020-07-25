@@ -1,2 +1,0 @@
----
-postgresql_mount_statement: type=bind,source={{ postgresql_persistent_dir }},destination=/var/lib/pgsql/data,relabel=shared

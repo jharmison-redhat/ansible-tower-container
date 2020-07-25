@@ -4,4 +4,3 @@
     deployment_state: stopped
   roles:
     - tower-container
-    - tower-postgresql-container
