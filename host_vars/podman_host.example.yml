@@ -15,7 +15,7 @@ registry_password: <very long password>
 rhsm_username: USERNAME
 rhsm_password: 'PASSWORD'
 
-# You can change this to, for example, `../tower_pgsql` to keep it in the
+# You can change this to, for example, `../tmp/tower_pgsql` to keep it in the
 #   project directory
 postgresql_persistent_dir: /tmp/tower_pgsql
 
