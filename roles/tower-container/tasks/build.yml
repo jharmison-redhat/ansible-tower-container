@@ -5,8 +5,13 @@
 - name: "[BUILD] Ensure latest Ansible Tower setup is modified"
   import_tasks: modify.yml
 
+- name: "[BUILD] Check for completed image"
+  shell: podman images -qf reference='{{ tower_container_image_name }}'
+  register: tower_images
+  changed_when: false
+
 - name: "[BUILD] Ensure Ansible Tower has been packaged, if updated"
   include_tasks: package.yml
   when:
-    - setup_unarchive is defined
-    - setup_unarchive.changed
+    - tower_images.stdout.strip() != "" or setup_unarchive is defined
+    - tower_images.stdout.strip() != "" or setup_unarchive.changed
