@@ -3,13 +3,12 @@ FROM registry.access.redhat.com/ubi8/ubi-init
 RUN dnf -y install python38 sudo
 RUN python3 -m pip install --upgrade pip setuptools virtualenv ansible
 
-COPY getty.conf /etc/systemd/system/console-getty.service.d/override.conf
-COPY tower-install.service /etc/systemd/system/tower-install.service
-RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers && \
-    systemctl enable tower-install.service
-
 COPY ansible-tower-setup-{{ ansible_tower_version }} /app
 COPY rhsm-register.sh /app/rhsm-register.sh
+COPY tower-install.service /etc/systemd/system/tower-install.service
+
+RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers && \
+    systemctl enable tower-install.service
 
 EXPOSE 80
 EXPOSE 443
