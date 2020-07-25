@@ -1,5 +1,5 @@
 ---
-deployment_state: present
+deployment_state: running
 
 tower_admin_password: 'password'
 postgresql_database: 'tower'
