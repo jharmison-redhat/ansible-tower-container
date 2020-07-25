@@ -13,5 +13,5 @@
 - name: "[BUILD] Ensure Ansible Tower has been packaged, if updated"
   include_tasks: package.yml
   when:
-    - tower_images.stdout.strip() != "" or setup_unarchive is defined
-    - tower_images.stdout.strip() != "" or setup_unarchive.changed
+    - tower_images.stdout.strip() == "" or setup_unarchive is defined
+    - tower_images.stdout.strip() == "" or setup_unarchive.changed
