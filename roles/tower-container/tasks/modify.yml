@@ -33,3 +33,23 @@
     replace: |2-
         \1: # modified
           unsafe_writes: yes
+
+- name: "[MODIFY] Tweak installer template/copy locations"
+  lineinfile:
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/postgres/vars/RedHat-8.yml
+    regexp: "^pg_conf_dir: '/var/lib/pgsql/data'$"
+    line: 'pg_conf_dir: /tmp'
+
+- name: "[MODIFY] Clean up all pgsql files afterwards"
+  blockinfile:
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/postgres/tasks/conf.yml
+    insertbefore: Create unix socket directory
+    block: |
+      - name: "[HACK] move things from /tmp"
+        shell: |
+          [ -f /tmp/{{"{{"}} item {{"}}"}} ] && mv /tmp/{{"{{"}} item {{"}}"}} /var/lib/pgsql/data/ ||:
+        loop:
+          - server.key
+          - server.crt
+          - pg_hba.conf
+          - postgresql.conf
