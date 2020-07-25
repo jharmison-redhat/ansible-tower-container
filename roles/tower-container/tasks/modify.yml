@@ -27,7 +27,9 @@
     replace: 'C.utf8'
 
 - name: "[MODIFY] Allow templating pgsql configs on bind mount"
-  lineinfile:
+  replace:
     path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/postgres/tasks/conf.yml
-    line: '    unsafe_writes: yes'
-    insertafter: '^  (copy|template):$'
+    regexp: '^  (copy|template):$'
+    replace: |2-
+        \1: # modified
+          unsafe_writes: yes
