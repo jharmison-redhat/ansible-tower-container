@@ -15,7 +15,7 @@
         src: inventory.j2
         dest: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/inventory
 
-    - name: "[PACKAGE] Build the Tower container"
+    - name: "[PACKAGE] Build the Tower init container"
       podman_image:
         name: '{{ tower_container_image_name }}-init'
         path: ../tmp/
