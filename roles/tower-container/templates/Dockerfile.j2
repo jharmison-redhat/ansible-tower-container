@@ -6,9 +6,6 @@ RUN python3 -m pip install --upgrade pip setuptools virtualenv ansible
 COPY getty.conf /etc/systemd/system/console-getty.service.d/override.conf
 COPY tower-install.service /etc/systemd/system/tower-install.service
 RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers && \
-    systemctl unmask console-getty.service && \
-    systemctl unmask systemd-logind.service && \
-    systemctl enable console-getty.service && \
     systemctl enable tower-install.service
 
 COPY ansible-tower-setup-{{ ansible_tower_version }} /app

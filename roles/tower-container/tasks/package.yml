@@ -1,13 +1,4 @@
 - block:
-    - name: "[PACKAGE] Stage getty override"
-      copy:
-        content: |
-          [Service]
-          ExecStart=
-          ExecStartPre=-/usr/bin/sed -i '/pam_loginuid.so/d' /etc/pam.d/login
-          ExecStart=-/sbin/agetty --autologin root --noclear --keep-baud console 115200 38400 9600 vt
-        dest: ../tmp/getty.conf
-
     - name: "[PACKAGE] Template files needed for build"
       template:
         src: '{{ item.name }}.j2'
@@ -44,7 +35,6 @@
         tty: true
         stop_signal: 3
         ports:
-          - '{{ tower_http_port|default("8080") }}:80'
           - '{{ tower_https_port|default("8443") }}:443'
         read_only_tmpfs: false
         tmpfs:

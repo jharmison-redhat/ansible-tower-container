@@ -11,8 +11,7 @@ postgresql_persistent_dir: /tmp/tower_pgsql
 # You should absolutely 100% definitely change this
 tower_admin_password: password
 
-# These can be changed if you like, or left alone for the module_defaults
-tower_http_port: "8080"
+# This can be changed if you like, or left alone for the module_defaults
 tower_https_port: "8443"
 
 # You can provide the path to a json file that contains your Tower license to
@@ -31,4 +30,8 @@ eula_status:
 #   extra-vars if you prefer.
 tower_container_name: ansible-tower
 tower_container_image_name: ansible-tower
-tower_postgresql_container_name: ansible-tower-postgresql
+
+# If you want trusted TLS, you can provide these files to include them
+#   automatically, otherwise you get self-signed
+# web_server_ssl_cert: ../tower.cert
+# web_server_ssl_key: ../tower.key

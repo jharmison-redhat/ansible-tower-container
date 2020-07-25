@@ -10,7 +10,6 @@
     tty: true
     stop_signal: 3
     ports:
-      - '{{ tower_http_port|default("8080") }}:80'
       - '{{ tower_https_port|default("8443") }}:443'
     read_only_tmpfs: false
     tmpfs:

@@ -12,3 +12,10 @@ pg_port=''
 pg_database='tower'
 pg_username='tower'
 pg_password='ansible-tower'
+
+{% if web_server_ssl_cert is defined %}
+web_server_ssl_cert={{ web_server_ssl_cert }}
+{% endif %}
+{% if web_server_ssl_key is defined %}
+web_server_ssl_key={{ web_server_ssl_key }}
+{% endif %}
