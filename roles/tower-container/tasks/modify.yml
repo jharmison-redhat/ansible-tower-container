@@ -19,3 +19,9 @@
       subscription-manager unregister
       systemctl disable tower-install.service
       exit $RC
+
+- name: "[MODIFY] Change locale for pgsql config"
+  replace:
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/postgres/templates/postgresql.conf.j2
+    regexp: 'en_US\.UTF-8'
+    replace: 'C.utf8'
