@@ -2,5 +2,5 @@
 
 set -ex
 
-subscription-manager register --username="$RHSM_USERNAME" --password="$RHSM_PASSWORD"
+subscription-manager register --username='{{ rhsm_username }}' --password='{{ rhsm_password }}'
 subscription-manager attach --auto
