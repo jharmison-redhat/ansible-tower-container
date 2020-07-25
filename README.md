@@ -12,6 +12,9 @@ To use:
 1. \[OPTIONAL\] Edit `hosts.yml` to update which host you want to be doing the podman work on
 1. \[OPTIONAL\] If you have an Ansible Tower license `.json` file (e.g. from [the workshop license link](https://www.ansible.com/workshop-license)), you can place it at the project root as `tower_license.json`
 1. `ansible-galaxy collection install -r requirements.yml` to install the podman Ansible Collection content
-1. `ansible-playbook playbooks/build.yml` to build
-1. `ansible-playbook playbooks/run.yml` to build and run
-1. `ansible-playbook playbooks/destroy.yml` to stop and remove
+1. `ansible-playbook playbooks/build.yml` to build (if new version of Ansible)
+1. `ansible-playbook playbooks/run.yml` to build (if new version of Ansible) and run
+1. `ansible-playbook playbooks/stop.yml` to stop Tower and PostgreSQL where they are
+1. `ansible-playbook playbooks/destroy.yml` to stop and remove Tower and PostgreSQL
+
+So, for instance, you could prepare with `build`, begin your demo with `run`, and then bring the environment down non-destructively with `stop` to use another day.
