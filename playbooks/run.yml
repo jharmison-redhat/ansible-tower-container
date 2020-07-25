@@ -4,5 +4,5 @@
   vars:
     deployment_state: running
   roles:
-    - tower-container
     - tower-postgresql-container
+    - tower-container
