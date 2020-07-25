@@ -1,4 +1,22 @@
 ---
+- name: "[BUILD] Create folder"
+  file:
+    path: '{{ postgresql_persistent_dir }}'
+    state: directory
+  when: postgresql_persistent|bool
+
+- name: "[BUILD] Check folder owner"
+  shell: podman unshare stat -c '%u:%g' "{{ postgresql_persistent_dir }}"
+  changed_when: false
+  register: persistent_dir_owner
+  when: postgresql_persistent|bool
+
+- name: "[BUILD] Set owner for folder"
+  shell: podman unshare chown 26:26 "{{ postgresql_persistent_dir }}"
+  when:
+    - postgresql_persistent|bool
+    - persistent_dir_owner.stdout != '26:26'
+
 - name: "[BUILD] Ensure latest Ansible Tower setup is downloaded"
   import_tasks: download.yml
 

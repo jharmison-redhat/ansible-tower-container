@@ -39,6 +39,7 @@
         read_only_tmpfs: false
         tmpfs:
           /tmp: rw,nosuid,nodev
+        mount: "{{ postgresql_persistent|bool|ternary(postgresql_mount_statement, omit) }}"
 
     - name: "[PACKAGE] Wait for Tower setup to finish"
       uri:

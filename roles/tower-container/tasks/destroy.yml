@@ -17,6 +17,18 @@
     state: absent
   loop: '{{ tower_tags.stdout_lines }}'
 
+- name: "[DESTROY] Check for persistent folder"
+  stat:
+    path: '{{ postgresql_persistent_dir }}'
+  register: persistent_dir
+  when: postgresql_persistent|bool
+
+- name: "[DESTROY] Remove folder"
+  shell: podman unshare rm -rf '{{ postgresql_persistent_dir }}'
+  when:
+    - postgresql_persistent|bool
+    - persistent_dir.stat.exists
+
 - name: "[DESTROY] Remove everything in tmp"
   file:
     path: '{{ item }}'

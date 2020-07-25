@@ -9,9 +9,9 @@ admin_password='{{ tower_admin_password }}'
 pg_host=''
 pg_port=''
 
-pg_database='tower'
-pg_username='tower'
-pg_password='ansible-tower'
+pg_database='{{ postgresql_database }}'
+pg_username='{{ postgresql_user }}'
+pg_password='{{ postgresql_password }}'
 
 {% if web_server_ssl_cert is defined %}
 web_server_ssl_cert={{ web_server_ssl_cert }}

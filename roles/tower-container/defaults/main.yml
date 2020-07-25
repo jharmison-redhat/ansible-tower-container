@@ -1,11 +1,13 @@
 ---
 deployment_state: running
 
-tower_admin_password: 'password'
 postgresql_database: 'tower'
 postgresql_user: 'tower'
 postgresql_password: 'ansible-tower'
+postgresql_persistent: yes
+postgresql_persistent_dir: /var/lib/pgsql/data
 
+tower_admin_password: 'password'
 disable_job_isolation: true
 
 eula_status:
