@@ -11,8 +11,11 @@
     regexp: '^(.*)if ansible_all_ipv6_addresses \!= \[\](.*)$'
     replace: '\1if ansible_all_ipv6_addresses is defined and ansible_all_ipv6_addresses != []\2'
 
-- name: "[MODIFY] Unregister after setup"
-  lineinfile:
+- name: "[MODIFY] Unregister and disable tower-install after setup"
+  replace:
     path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/setup.sh
-    line: subscription-manager unregister
-    insertbefore: '{{ "exit ${RC}"|regex_escape() }}'
+    regexp: '{{ "exit ${RC}"|regex_escape() }}'
+    replace: |
+      subscription-manager unregister
+      systemctl disable tower-install.service
+      exit $RC

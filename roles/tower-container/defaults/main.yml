@@ -1,6 +1,21 @@
 ---
-tower_admin_password: 'password'
+deployment_state: present
 
+tower_admin_password: 'password'
 postgresql_database: 'tower'
 postgresql_user: 'tower'
 postgresql_password: 'ansible-tower'
+
+disable_job_isolation: true
+
+eula_status:
+  eula_accepted: false
+
+tower_container_name: ansible-tower
+tower_container_image_name: ansible-tower
+
+# This should be overwritten by an ansible_facts run unless you supply the
+#   variable named `destroy_tower_version` with `--extra-vars` for example
+tower_tags:
+  stdout_lines:
+    - '{{ destroy_tower_version|default("latest") }}'

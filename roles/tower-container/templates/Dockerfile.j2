@@ -1,4 +1,4 @@
-FROM registry.redhat.io/ubi8/ubi-init
+FROM registry.access.redhat.com/ubi8/ubi-init
 
 RUN dnf -y install python38 sudo
 RUN python3 -m pip install --upgrade pip setuptools virtualenv ansible

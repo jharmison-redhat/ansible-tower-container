@@ -1,7 +1,7 @@
 ---
 - name: "[DESTROY] Undefine the Postgresql container for Ansible Tower"
   podman_container:
-    name: tower_postgresql
+    name: '{{ tower_postgresql_container_name }}'
     state: absent
 
 - name: "[DESTROY] Remove postgresql10 image"

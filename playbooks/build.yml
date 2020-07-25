@@ -4,4 +4,3 @@
   roles:
     - tower-postgresql-container
     - tower-container
-    - tower-adjust

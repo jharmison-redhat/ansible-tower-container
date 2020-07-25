@@ -25,7 +25,7 @@
 
 - name: "[BUILD] Define a Postgresql container for Ansible Tower"
   podman_container:
-    name: tower_postgresql
+    name: '{{ tower_postgresql_container_name }}'
     image: '{{ postgresql_image }}'
     state: started
     log_driver: journald

@@ -2,8 +2,8 @@
 - name: "[RUN] Start the Tower container"
   podman_container:
     state: started
-    name: tower
-    image: tower:latest
+    name: '{{ tower_container_name }}'
+    image: '{{ tower_container_image_name }}:{{ ansible_tower_version }}'
     log_driver: journald
     rm: true
     interactive: true
@@ -15,10 +15,8 @@
     read_only_tmpfs: false
     tmpfs:
       /tmp: rw,nosuid,nodev
-    security_opt:
-      - label=type:container_userns_t
 
-- name: "[RUN] Wait for Tower to come up from installation"
+- name: "[RUN] Wait for Tower to come up"
   uri:
     url: "https://{{ ansible_host }}:{{ tower_https_port }}/api/v2/ping/"
     follow_redirects: none

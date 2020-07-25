@@ -7,3 +7,5 @@ postgresql_image: registry.redhat.io/rhel8/postgresql-10
 postgresql_user: tower
 postgresql_password: tower
 postgresql_database: ansibletower
+
+tower_postgresql_container_name: ansible-tower-postgresql

@@ -1,13 +1,21 @@
 ---
 - name: "[DESTROY] Destroy the Tower container"
   podman_container:
-    name: tower
+    name: '{{ tower_container_name }}'
     state: absent
+
+- name: "[DESTROY] Gather all image tags for Tower"
+  shell: podman images -f reference='{{ tower_container_image_name }}' --format='{{ "{{" }}.Tag{{ "}}" }}'
+  register: tower_tags
+  changed_when: false
+  when: destroy_tower_version is undefined
 
 - name: "[DESTROY] Destroy the Tower container image"
   podman_image:
-    name: tower
+    name: '{{ tower_container_image_name }}'
+    tag: '{{ item }}'
     state: absent
+  loop: '{{ tower_tags.stdout_lines }}'
 
 - name: "[DESTROY] Remove everything in tmp"
   file:
