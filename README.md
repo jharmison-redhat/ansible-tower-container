@@ -1,10 +1,12 @@
 # Ansible Tower in a container - demo
 
+## Don't push this image anywhere - it has your RHSM creds and potentially Tower license in it.
+
 ---
 
 This demo is to spin up Ansible Tower in a single container on your local machine (or a remote one, if you modify the inventory) using Podman as the container runtime and Ansible as the configuration mechanism.
 
-To use:
+### Use
 
 1. Preinstall `ansible` of version 2.9 or higher
 1. Preinstall `podman` and ensure you can run rootless containers on your OS of choice
@@ -19,3 +21,38 @@ To use:
 1. `ansible-playbook playbooks/destroy.yml` to stop and remove Tower
 
 So, for instance, you could prepare with `build`, begin your demo with `run`, and then bring the environment down non-destructively with `stop` to use another day.
+
+### What works
+
+- You can build and run Ansible Tower in Fedora 31+ with rootless podman with SELinux enforcing in a grand total of about 7 minutes.
+- It runs as a single container and can be persistent across starts/stops/rms/creates.
+- It can be licensed automatically.
+- You can provide your own TLS cert/key.
+
+### What doesn't work yet (but will)
+
+- Specifying python packages for automatic inclusion in the default virtualenv
+- Specifying an inventory and preloading it
+- Specifying a set of projects to sync and presyncing them
+
+### What won't work
+
+- PgSQL persistence if you remove the built container image
+  - This means that containers spawned from the image should be fine, but every individual image requires its own persistence directory if you're trying to start more than one or something.
+
+### What might work
+
+- RHEL 8 host?
+
+### Specs
+
+The following are some times that I measured at the time of this writing:
+
+| Task                                    | Time    |
+|-----------------------------------------|--------:|
+| Starting and running Tower from scratch |   7m 2s |
+| Stopping a Tower container              |     12s |
+| Starting a Tower container again        |     14s |
+| Removing everything                     |     18s |
+
+The final image is about 1.9GB right now. I can get that down to 1.7GB at best, but it takes longer and isn't really worth it. DO NOT PUSH THIS IMAGE ANYWHERE :)
