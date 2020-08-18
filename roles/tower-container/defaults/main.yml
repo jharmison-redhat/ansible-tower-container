@@ -5,7 +5,7 @@ postgresql_database: 'tower'
 postgresql_user: 'tower'
 postgresql_password: 'ansible-tower'
 postgresql_persistent: yes
-postgresql_persistent_dir: /var/lib/pgsql/data
+postgresql_persistent_dir: /var/lib/pgsql
 
 tower_admin_password: 'password'
 disable_job_isolation: true
