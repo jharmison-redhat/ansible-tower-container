@@ -51,7 +51,7 @@
         validate_certs: false
       register: _result
       until: _result.json is defined
-      retries: 120
+      retries: 300
       delay: 5
 
     - name: "[PACKAGE] Post license key"
