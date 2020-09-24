@@ -53,3 +53,33 @@
           - server.crt
           - pg_hba.conf
           - postgresql.conf
+
+- name: "[MODIFY] Correct redis service module"
+  lineinfile:
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/redis/tasks/tasks.yml
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  loop:
+  - regexp: "^  service:$"
+    line: "  systemd:"
+  - regexp: "^    state: restarted$"
+    line: ""
+
+- name: "[MODIFY] Add a specific section to just manually start redis"
+  blockinfile:
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/redis/tasks/tasks.yml
+    block: |
+      - name: "[HACK] start redis"
+        shell: systemctl start redis
+
+- name: "[MODIFY] Hack up the postgres start"
+  blockinfile:
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/postgres/tasks/init.yml
+    marker: "{mark}"
+    marker_begin: '    creates: "{{ "{{" }} pg_conf_dir {{ "}}" }}/PG_VERSION"'
+    marker_end: '- name: Wait for PostgreSQL to start if it wasnt'
+    block: |+
+
+      - name: Make sure PostgreSQL is started
+        shell: systemctl start postgresql
+        register: postgresql_start
