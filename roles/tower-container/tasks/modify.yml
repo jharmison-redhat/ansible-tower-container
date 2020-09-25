@@ -83,3 +83,86 @@
       - name: Make sure PostgreSQL is started
         shell: systemctl start postgresql
         register: postgresql_start
+
+- name: "[MODIFY] Hack up the postgres restart"
+  blockinfile:
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/postgres/tasks/conf.yml
+    marker: "{mark}"
+    marker_begin: "    setype: 'lib_t'"
+    marker_end: "- name: wait for postgresql restart"
+    block: |+
+
+      - name: restart postgresql when authentication settings changed
+        shell: systemctl restart postgresql
+        when: pg_hba_conf is changed or pg_general_conf is changed
+        register: postgresql_restart
+
+- name: "[MODIFY] Hack up the supervisord stop"
+  blockinfile:
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/awx_install/tasks/tasks.yml
+    marker: "{mark}"
+    marker_begin: "    - restart supervisor"
+    marker_end: "- name: Wait for supervisor to stop."
+    block: |+
+
+      - name: Stop supervisor
+        shell: systemctl stop supervisord
+
+- name: "[MODIFY] Don't start supervisord"
+  lineinfile:
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/supervisor/tasks/tasks.yml
+    regexp: "^    state: started$"
+    state: absent
+
+- name: "[MODIFY] Start supervisord with shell"
+  blockinfile:
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/supervisor/tasks/tasks.yml
+    marker: "{mark}"
+    marker_begin: "    enabled: yes"
+    marker_end: "- name: Wait for the supervisor socket"
+    block: |+
+
+      - name: Start supervisor
+        shell: systemctl start supervisord
+
+- name: "[MODIFY] Don't start nginx"
+  lineinfile:
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/nginx/tasks/tasks.yml
+    regexp: "^    state: started$"
+    state: absent
+
+- name: "[MODIFY] Restart nginx with shell"
+  copy:
+    dest: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/nginx/handlers/main.yml
+    content: |
+      ---
+      - name: restart nginx
+        shell: systemctl restart nginx
+
+- name: "[MODIFY] Restart supervisor with shell"
+  copy:
+    dest: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/supervisor/handlers/main.yml
+    content: |
+      ---
+      - name: restart supervisor
+        debug:
+          msg: Restarting supervisor.
+        changed_when: true
+        notify:
+          - Stop supervisor.
+          - Wait for supervisor to stop.
+          - Start supervisor.
+
+      - name: Stop supervisor.
+        shell: systemctl stop supervisord
+
+      - name: Wait for supervisor to stop.
+        stat:
+          path: '/var/run/supervisor/supervisor.sock'
+        register: result
+        until: not result.stat.exists
+        retries: 10
+        delay: 2
+
+      - name: Start supervisor.
+        shell: systemctl start supervisord
