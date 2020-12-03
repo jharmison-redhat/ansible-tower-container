@@ -131,6 +131,12 @@
     regexp: "^    state: started$"
     state: absent
 
+- name: "[MODIFY] Don't setfacl"
+  replace:
+    path: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/awx_install/tasks/tasks.yml
+    regexp: "^  when: rhsm_conf_exists.stat.exists.*$"
+    replace: "  when: false"
+
 - name: "[MODIFY] Restart nginx with shell"
   copy:
     dest: ../tmp/ansible-tower-setup-{{ ansible_tower_version }}/roles/nginx/handlers/main.yml
