@@ -1,3 +1,24 @@
+- name: "[PACKAGE] Remove any remaining tower directory since we're rebuilding"
+  shell: podman unshare rm -rf {{ postgresql_persistent_dir }}
+
+- name: "[PACKAGE] Create folder"
+  file:
+    path: '{{ postgresql_persistent_dir }}'
+    state: directory
+  when: postgresql_persistent|bool
+
+- name: "[PACKAGE] Check folder owner"
+  shell: podman unshare stat -c '%u:%g' "{{ postgresql_persistent_dir }}"
+  changed_when: false
+  register: persistent_dir_owner
+  when: postgresql_persistent|bool
+
+- name: "[PACKAGE] Set owner for folder"
+  shell: podman unshare chown 26:26 "{{ postgresql_persistent_dir }}"
+  when:
+    - postgresql_persistent|bool
+    - persistent_dir_owner.stdout != '26:26'
+
 - block:
     - name: "[PACKAGE] Template files needed for build"
       template:
