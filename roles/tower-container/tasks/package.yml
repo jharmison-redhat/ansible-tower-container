@@ -75,18 +75,6 @@
       retries: 300
       delay: 5
 
-    - name: "[PACKAGE] Post license key"
-      uri:
-        url: https://{{ ansible_host }}:{{ tower_https_port }}/api/v2/config/
-        method: POST
-        user: admin
-        password: '{{ tower_admin_password }}'
-        body: '{{ lookup("file", tower_license)|from_json|combine(eula_status) }}'
-        body_format: json
-        validate_certs: false
-        force_basic_auth: true
-      when: tower_license is defined
-
     - name: "[PACKAGE] Disable job isolation"
       uri:
         url: https://{{ ansible_host }}:{{ tower_https_port }}/api/v2/settings/jobs/

@@ -12,7 +12,6 @@ This demo is to spin up Ansible Tower in a single container on your local machin
 1. Preinstall `podman` and ensure you can run rootless containers on your OS of choice
 1. Copy `host_vars/podman_host.example.yml` to `host_vars/podman_host.yml` and update it with the information relevant for you (using the comments there as a guide)
 1. \[OPTIONAL\] Edit `hosts.yml` to update which host you want to be doing the podman work on
-1. \[OPTIONAL\] If you have an Ansible Tower license `.json` file (e.g. from [the workshop license link](https://www.ansible.com/workshop-license)), you can place it at the project root as `tower_license.json` after enabling the variables. It has been .gitignored.
 1. \[OPTIONAL\] If you want to use your own TLS certificates instead of self-signing them, you can place them in the project root as `tower.cert` and `tower.key` after enabling the variables. They have been .gitignored.
 1. `ansible-galaxy collection install -r requirements.yml` to install the podman Ansible Collection content
 1. `ansible-playbook playbooks/build.yml` to build (if new version of Ansible)
@@ -26,11 +25,11 @@ So, for instance, you could prepare with `build`, begin your demo with `run`, an
 
 - You can build and run Ansible Tower in Fedora 31+ with rootless podman with SELinux enforcing in a grand total of about 7 minutes.
 - It runs as a single container and can be persistent across starts/stops/rms/creates.
-- It can be licensed automatically.
 - You can provide your own TLS cert/key.
 
 ### What doesn't work yet (but will)
 
+- Specifying a license to use with the new Manifest mechanism
 - Specifying python packages for automatic inclusion in the default virtualenv
 - Specifying an inventory and preloading it
 - Specifying a set of projects to sync and presyncing them

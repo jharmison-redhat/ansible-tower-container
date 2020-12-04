@@ -14,17 +14,6 @@ tower_admin_password: password
 # This can be changed if you like, or left alone for the module_defaults
 tower_https_port: "8443"
 
-# You can provide the path to a json file that contains your Tower license to
-#   have it automatically entitled.
-# This path is relative to the playbooks, so `../tower_license.json` is in the
-#   project root.
-# tower_license: ../tower_license.json
-
-# If you've provided the license and have accepted the Ansible Tower EULA you
-#   may change this key to accept it automatically on the Tower instance
-eula_status:
-  eula_accepted: false
-
 # You can change these if you would like to, for example, spin up multiple
 #   copies of tower simultaneously. You can also override them with just
 #   extra-vars if you prefer.
